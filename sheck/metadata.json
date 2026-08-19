@@ -1,0 +1,6 @@
+{
+  "name": "SHECK",
+  "description": "SHECK - Plataforma de eventos y votaciones en tiempo real con Google Sign-In, subida de imágenes, notificaciones push (FCM) para eventos próximos y finalizados, y enlaces para compartir en WhatsApp, Facebook y Twitter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
