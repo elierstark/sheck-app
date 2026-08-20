@@ -5,10 +5,10 @@ import { EventCard } from './components/EventCard';
 import { EventDetail } from './components/EventDetail';
 import { CreateEventView } from './components/CreateEventView';
 import { MyVotesView } from './components/MyVotesView';
-import { ArchitectureDocs } from './components/ArchitectureDocs';
 import { MobileFrame } from './components/MobileFrame';
 import { UserSwitcherModal } from './components/UserSwitcherModal';
 import { NotificationCenter } from './components/NotificationCenter';
+import { LoginScreen } from './components/LoginScreen';
 import { 
   Vote, 
   Search, 
@@ -25,17 +25,35 @@ import {
   Database,
   ShieldCheck,
   Zap,
-  Server
+  Server,
+  LogIn
 } from 'lucide-react';
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<User>({
-    id: 'usr_1',
-    google_id: '109876543210987654321',
-    name: 'Elie Rivero',
-    email: 'elierivero91@gmail.com',
-    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    created_at: new Date().toISOString()
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('sheck_auth_user');
+      return !!saved;
+    } catch {
+      return false;
+    }
+  });
+
+  const [isGuest, setIsGuest] = useState<boolean>(false);
+
+  const [currentUser, setCurrentUser] = useState<User>(() => {
+    try {
+      const saved = localStorage.getItem('sheck_auth_user');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      id: 'usr_1',
+      google_id: '109876543210987654321',
+      name: 'Elie Rivero',
+      email: 'elierivero91@gmail.com',
+      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      created_at: new Date().toISOString()
+    };
   });
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -43,11 +61,11 @@ export default function App() {
   const [userVotedEventIds, setUserVotedEventIds] = useState<string[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   
-  const [activeTab, setActiveTab] = useState<'events' | 'create' | 'my-votes' | 'docs'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'create' | 'my-votes'>('events');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'upcoming' | 'closed' | 'mine'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const [isMobileFrame, setIsMobileFrame] = useState(false);
+  const [isMobileFrame, setIsMobileFrame] = useState(true);
   const [showGoogleAuthModal, setShowGoogleAuthModal] = useState(false);
   const [showNotificationsDrawer, setShowNotificationsDrawer] = useState(false);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
@@ -133,9 +151,52 @@ export default function App() {
   const activeEventsCount = events.filter((e) => e.status === 'active').length;
   const totalVotesAcrossAll = events.reduce((acc, curr) => acc + (curr.total_votes || 0), 0);
 
+  const handleLogout = () => {
+    localStorage.removeItem('sheck_auth_user');
+    setIsAuthenticated(false);
+    setIsGuest(false);
+  };
+
+  // If user is not authenticated and did not opt to browse as guest, show the dedicated Login Screen
+  if (!isAuthenticated && !isGuest) {
+    return (
+      <LoginScreen
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          setIsAuthenticated(true);
+          setIsGuest(false);
+          fetchData();
+        }}
+        onContinueAsGuest={() => {
+          setIsGuest(true);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
       
+      {/* Guest Mode Notice Banner */}
+      {isGuest && (
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white px-4 py-2 text-xs flex items-center justify-between border-b border-blue-800">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Estás navegando en <strong>Modo Invitado</strong> (Solo lectura).</span>
+          </div>
+          <button
+            onClick={() => {
+              setIsGuest(false);
+              setIsAuthenticated(false);
+            }}
+            className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition-all flex items-center gap-1 shadow-xs"
+          >
+            <LogIn className="w-3 h-3" />
+            Iniciar Sesión con Google
+          </button>
+        </div>
+      )}
+
       {/* Primary Top Navigation */}
       <Navbar
         currentUser={currentUser}
@@ -154,6 +215,8 @@ export default function App() {
         onOpenGoogleAuthModal={() => setShowGoogleAuthModal(true)}
         unreadNotificationsCount={unreadNotificationsCount}
         onOpenNotifications={() => setShowNotificationsDrawer(true)}
+        onLogout={handleLogout}
+        isGuest={isGuest}
       />
 
       {/* Main Content Area (supports wrapping in MobileFrame) */}
@@ -163,12 +226,7 @@ export default function App() {
           onToggle={() => setIsMobileFrame(false)}
         >
           
-          {/* VIEW 1: Architectural & Android Technical Guide */}
-          {activeTab === 'docs' && (
-            <ArchitectureDocs />
-          )}
-
-          {/* VIEW 2: Create Event Form */}
+          {/* VIEW 1: Create Event Form */}
           {activeTab === 'create' && (
             <CreateEventView
               currentUser={currentUser}
@@ -453,14 +511,6 @@ export default function App() {
                           <p className="text-[10px] text-slate-400">Envío de ID Token a Node.js API</p>
                         </div>
                       </div>
-
-                      <button
-                        onClick={() => setActiveTab('docs')}
-                        className="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-[11px] font-bold text-center transition-colors flex items-center justify-center gap-1.5"
-                      >
-                        <Code2 className="w-3.5 h-3.5 text-blue-400" />
-                        Ver Código Kotlin
-                      </button>
                     </div>
 
                     {/* API Status Card */}

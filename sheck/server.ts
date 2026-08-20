@@ -19,23 +19,7 @@ const usersTable: User[] = [
     name: 'Elie Rivero',
     email: 'elierivero91@gmail.com',
     avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    created_at: new Date(Date.now() - 86400000 * 10).toISOString()
-  },
-  {
-    id: 'usr_2',
-    google_id: '109876543210987654322',
-    name: 'Carlos Mendoza',
-    email: 'carlos.mendoza@techdev.io',
-    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString()
-  },
-  {
-    id: 'usr_3',
-    google_id: '109876543210987654323',
-    name: 'Sofía Valenzuela',
-    email: 'sofia.valenzuela@designstudio.com',
-    avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString()
+    created_at: new Date().toISOString()
   }
 ];
 
@@ -44,199 +28,19 @@ const now = Date.now();
 // Firebase Cloud Messaging Device Tokens Table
 const fcmTokensTable: FCMDeviceToken[] = [
   {
-    token: 'fcm_token_web_usr1_android_emulator_sheck_app',
+    token: 'fcm_token_web_usr1_android_sheck_app',
     user_id: 'usr_1',
     platform: 'android',
-    created_at: new Date(now - 1000 * 60 * 60 * 24).toISOString()
-  },
-  {
-    token: 'fcm_token_web_usr2_chrome_desktop',
-    user_id: 'usr_2',
-    platform: 'web',
-    created_at: new Date(now - 1000 * 60 * 60 * 12).toISOString()
+    created_at: new Date().toISOString()
   }
 ];
 
 // In-App & Push Notifications Table
-const notificationsTable: NotificationItem[] = [
-  {
-    id: 'notif_1',
-    user_id: 'usr_1',
-    event_id: 'evt_1',
-    type: 'event_upcoming',
-    title: '⏰ Evento próximo a iniciar: Hackathon Mobile 2026',
-    body: 'La votación en vivo para la Mejor App de Inteligencia Artificial está por abrir. ¡Prepárate para emitir tu voto!',
-    read: false,
-    created_at: new Date(now - 1000 * 60 * 25).toISOString(),
-    data: {
-      event_id: 'evt_1',
-      event_title: 'Hackathon Mobile 2026: Mejor App de Inteligencia Artificial',
-      start_time: new Date(now - 1000 * 60 * 30).toISOString()
-    }
-  },
-  {
-    id: 'notif_2',
-    user_id: 'usr_1',
-    event_id: 'evt_3',
-    type: 'event_closed',
-    title: '🏆 Votación finalizada: Sede Encuentro 2026',
-    body: 'El evento en el que votaste ha concluido. La opción ganadora es "Tokio, Japón (Shibuya Hub)" con el 58% de los votos.',
-    read: true,
-    created_at: new Date(now - 1000 * 60 * 60 * 2).toISOString(),
-    data: {
-      event_id: 'evt_3',
-      event_title: 'Sede para el Encuentro Global de Desarrolladores 2026',
-      winner_option_title: 'Tokio, Japón (Shibuya Hub)',
-      winner_option_percentage: 58
-    }
-  }
-];
+const notificationsTable: NotificationItem[] = [];
 
-let eventsTable: EventItem[] = [
-  {
-    id: 'evt_1',
-    user_id: 'usr_1',
-    creator_name: 'Elie Rivero',
-    creator_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    title: 'Hackathon Mobile 2026: Mejor App de Inteligencia Artificial',
-    description: 'Vota en tiempo real por el proyecto más innovador desarrollado durante las 48 horas de hackathon. La votación se cerrará automáticamente.',
-    image_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80',
-    start_time: new Date(now - 1000 * 60 * 30).toISOString(), // started 30 mins ago
-    end_time: new Date(now + 1000 * 60 * 45).toISOString(), // ends in 45 mins
-    status: 'active',
-    voting_rule: 'single',
-    options: [
-      {
-        id: 'opt_1_1',
-        event_id: 'evt_1',
-        title: 'MedSync AI – Triaje Clínico Predictivo',
-        image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&auto=format&fit=crop&q=80',
-        votes_count: 42,
-        percentage: 42
-      },
-      {
-        id: 'opt_1_2',
-        event_id: 'evt_1',
-        title: 'EcoRoute – Movilidad Eléctrica Inteligente',
-        image_url: 'https://images.unsplash.com/photo-1558441719-2347b73f861b?w=400&auto=format&fit=crop&q=80',
-        votes_count: 35,
-        percentage: 35
-      },
-      {
-        id: 'opt_1_3',
-        event_id: 'evt_1',
-        title: 'NeuroLearn – Tutor Adaptativo en Realidad Aumentada',
-        image_url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&auto=format&fit=crop&q=80',
-        votes_count: 23,
-        percentage: 23
-      }
-    ],
-    total_votes: 100,
-    created_at: new Date(now - 1000 * 60 * 60).toISOString()
-  },
-  {
-    id: 'evt_2',
-    user_id: 'usr_3',
-    creator_name: 'Sofía Valenzuela',
-    creator_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-    title: 'Elección de Framework Móvil: Próximo Proyecto Core',
-    description: 'Definición de la arquitectura base para la nueva generación de aplicaciones de la empresa. Puedes votar por múltiples opciones.',
-    image_url: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop&q=80',
-    start_time: new Date(now - 1000 * 60 * 120).toISOString(),
-    end_time: new Date(now + 1000 * 60 * 180).toISOString(), // ends in 3 hours
-    status: 'active',
-    voting_rule: 'multiple',
-    options: [
-      {
-        id: 'opt_2_1',
-        event_id: 'evt_2',
-        title: 'Kotlin Multiplatform (KMP) + Jetpack Compose',
-        image_url: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=400&auto=format&fit=crop&q=80',
-        votes_count: 58,
-        percentage: 51
-      },
-      {
-        id: 'opt_2_2',
-        event_id: 'evt_2',
-        title: 'Flutter 3.x (Dart) con Impeller Engine',
-        image_url: 'https://images.unsplash.com/photo-1618401471353-b98aedd04e11?w=400&auto=format&fit=crop&q=80',
-        votes_count: 40,
-        percentage: 35
-      },
-      {
-        id: 'opt_2_3',
-        event_id: 'evt_2',
-        title: 'React Native New Architecture (Fabric + TurboModules)',
-        image_url: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&auto=format&fit=crop&q=80',
-        votes_count: 15,
-        percentage: 14
-      }
-    ],
-    total_votes: 113,
-    created_at: new Date(now - 1000 * 60 * 150).toISOString()
-  },
-  {
-    id: 'evt_3',
-    user_id: 'usr_2',
-    creator_name: 'Carlos Mendoza',
-    creator_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    title: 'Sede para el Encuentro Global de Desarrolladores 2026',
-    description: 'Evento concluido. Los votos han sido consolidados y la sede ganadora fue confirmada.',
-    image_url: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop&q=80',
-    start_time: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
-    end_time: new Date(now - 1000 * 60 * 60 * 2).toISOString(), // closed 2 hours ago
-    status: 'closed',
-    voting_rule: 'single',
-    options: [
-      {
-        id: 'opt_3_1',
-        event_id: 'evt_3',
-        title: 'Tokio, Japón (Shibuya Hub)',
-        image_url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=80',
-        votes_count: 145,
-        percentage: 58
-      },
-      {
-        id: 'opt_3_2',
-        event_id: 'evt_3',
-        title: 'Barcelona, España (Tech City Hub)',
-        image_url: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&auto=format&fit=crop&q=80',
-        votes_count: 75,
-        percentage: 30
-      },
-      {
-        id: 'opt_3_3',
-        event_id: 'evt_3',
-        title: 'San Francisco, EE.UU. (Moscone Center)',
-        image_url: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&auto=format&fit=crop&q=80',
-        votes_count: 30,
-        percentage: 12
-      }
-    ],
-    total_votes: 250,
-    winning_option_id: 'opt_3_1',
-    created_at: new Date(now - 1000 * 60 * 60 * 50).toISOString()
-  }
-];
+let eventsTable: EventItem[] = [];
 
-const votesTable: VoteRecord[] = [
-  {
-    id: 'vote_init_1',
-    event_id: 'evt_1',
-    option_id: 'opt_1_1',
-    user_id: 'usr_2',
-    user_name: 'Carlos Mendoza',
-    timestamp: new Date(now - 1000 * 60 * 20).toISOString()
-  },
-  {
-    id: 'vote_init_2',
-    event_id: 'evt_1',
-    option_id: 'opt_1_2',
-    user_id: 'usr_3',
-    user_name: 'Sofía Valenzuela',
-    timestamp: new Date(now - 1000 * 60 * 15).toISOString()
-  }
-];
+const votesTable: VoteRecord[] = [];
 
 // SSE listeners map for real-time live voting broadcast
 const sseClients = new Map<string, Response[]>();

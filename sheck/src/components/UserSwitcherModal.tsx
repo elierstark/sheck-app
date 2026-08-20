@@ -57,12 +57,6 @@ export const UserSwitcherModal: React.FC<UserSwitcherModalProps> = ({
     }
   };
 
-  const setQuickUser = (n: string, e: string, avatar: string) => {
-    setName(n);
-    setEmail(e);
-    setAvatarUrl(avatar);
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
       <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
@@ -91,29 +85,6 @@ export const UserSwitcherModal: React.FC<UserSwitcherModalProps> = ({
             {error}
           </div>
         )}
-
-        {/* Quick presets */}
-        <div className="mb-4">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-            Cuentas Rápidas de Prueba:
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setQuickUser('Elena Morales', 'elena.morales@innovacion.org', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80')}
-              className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left text-xs font-medium text-slate-700"
-            >
-              Elena Morales (Votante A)
-            </button>
-            <button
-              type="button"
-              onClick={() => setQuickUser('Diego Rojas', 'diego.rojas@mobiledev.io', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80')}
-              className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left text-xs font-medium text-slate-700"
-            >
-              Diego Rojas (Votante B)
-            </button>
-          </div>
-        </div>
 
         {/* Form */}
         <form onSubmit={handleSimulateGoogleLogin} className="space-y-3">

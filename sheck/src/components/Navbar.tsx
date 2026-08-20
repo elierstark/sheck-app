@@ -19,13 +19,15 @@ interface NavbarProps {
   currentUser: User;
   allUsers: User[];
   onSelectUser: (user: User) => void;
-  activeTab: 'events' | 'create' | 'my-votes' | 'docs';
-  setActiveTab: (tab: 'events' | 'create' | 'my-votes' | 'docs') => void;
+  activeTab: 'events' | 'create' | 'my-votes';
+  setActiveTab: (tab: 'events' | 'create' | 'my-votes') => void;
   isMobileFrame: boolean;
   setIsMobileFrame: (val: boolean) => void;
   onOpenGoogleAuthModal: () => void;
   unreadNotificationsCount?: number;
   onOpenNotifications: () => void;
+  onLogout?: () => void;
+  isGuest?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -38,7 +40,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setIsMobileFrame,
   onOpenGoogleAuthModal,
   unreadNotificationsCount = 0,
-  onOpenNotifications
+  onOpenNotifications,
+  onLogout,
+  isGuest = false
 }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
@@ -101,25 +105,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('my-votes')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeTab === 'my-votes'
-                  ? 'bg-white text-blue-600 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <History className="w-4 h-4" />
               Mis Votos
-            </button>
-
-            <button
-              id="nav-tab-docs"
-              onClick={() => setActiveTab('docs')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'docs'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Code2 className="w-4 h-4" />
-              Estructura Backend & Android
             </button>
           </nav>
 
@@ -200,41 +191,43 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                     </div>
 
-                    <div className="px-3 py-2">
-                      <div className="text-[11px] font-semibold text-slate-500 mb-1.5 px-2">
-                        Cambiar usuario de prueba (Simular Votantes):
+                    {allUsers.length > 1 && (
+                      <div className="px-3 py-2">
+                        <div className="text-[11px] font-semibold text-slate-500 mb-1.5 px-2">
+                          Cuentas guardadas en este dispositivo:
+                        </div>
+                        <div className="space-y-1">
+                          {allUsers.map((u) => (
+                            <button
+                              key={u.id}
+                              id={`switch-user-${u.id}`}
+                              onClick={() => {
+                                onSelectUser(u);
+                                setShowUserDropdown(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left text-xs transition-colors ${
+                                currentUser.id === u.id
+                                  ? 'bg-blue-50 text-blue-800 font-semibold'
+                                  : 'hover:bg-slate-50 text-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <img
+                                  src={u.avatar_url}
+                                  alt={u.name}
+                                  className="w-5 h-5 rounded-full object-cover"
+                                  referrerPolicy="no-referrer"
+                                />
+                                <span className="truncate">{u.name}</span>
+                              </div>
+                              {currentUser.id === u.id && <UserCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        {allUsers.map((u) => (
-                          <button
-                            key={u.id}
-                            id={`switch-user-${u.id}`}
-                            onClick={() => {
-                              onSelectUser(u);
-                              setShowUserDropdown(false);
-                            }}
-                            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left text-xs transition-colors ${
-                              currentUser.id === u.id
-                                ? 'bg-indigo-50 text-indigo-800 font-semibold'
-                                : 'hover:bg-slate-50 text-slate-700'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2 truncate">
-                              <img
-                                src={u.avatar_url}
-                                alt={u.name}
-                                className="w-5 h-5 rounded-full object-cover"
-                                referrerPolicy="no-referrer"
-                              />
-                              <span className="truncate">{u.name}</span>
-                            </div>
-                            {currentUser.id === u.id && <UserCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    )}
 
-                    <div className="border-t border-slate-100 pt-1.5 px-2">
+                    <div className="border-t border-slate-100 pt-1.5 px-2 space-y-1">
                       <button
                         id="btn-open-google-login-modal"
                         onClick={() => {
@@ -244,8 +237,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                        Simular nuevo Google Sign-In
+                        Cambiar / Nuevo Google ID
                       </button>
+
+                      {onLogout && (
+                        <button
+                          id="btn-logout"
+                          onClick={() => {
+                            setShowUserDropdown(false);
+                            onLogout();
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                        >
+                          <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                          Cerrar Sesión (Pantalla de Login)
+                        </button>
+                      )}
                     </div>
                   </div>
                 </>
@@ -283,15 +290,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <History className="w-3.5 h-3.5" />
             Mis Votos
-          </button>
-          <button
-            onClick={() => setActiveTab('docs')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 ${
-              activeTab === 'docs' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-600'
-            }`}
-          >
-            <Code2 className="w-3.5 h-3.5" />
-            Android & SQL
           </button>
         </div>
       </div>
